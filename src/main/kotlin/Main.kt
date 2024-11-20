@@ -18,16 +18,6 @@ class Main(private val token: String) : ListenerAdapter() {
     private lateinit var channelManager: ChannelManager
     private val config = ConfigLoader.loadConfig()
 
-    override fun onReady(event: ReadyEvent) {
-        channelManager.validateChannels()
-    }
-
-    override fun onStatusChange(event: StatusChangeEvent) {
-        if (event.newStatus == JDA.Status.CONNECTED) {
-            channelManager.validateChannels()
-        }
-    }
-
     fun start() {
         jda = JDABuilder.createDefault(token)
             .enableIntents(GatewayIntent.GUILD_VOICE_STATES)
@@ -39,6 +29,16 @@ class Main(private val token: String) : ListenerAdapter() {
         logger.info("Bot started successfully!")
 
         startCleanupTask()
+    }
+
+    override fun onReady(event: ReadyEvent) {
+        channelManager.validateChannels()
+    }
+
+    override fun onStatusChange(event: StatusChangeEvent) {
+        if (event.newStatus == JDA.Status.CONNECTED) {
+            channelManager.validateChannels()
+        }
     }
 
     private fun startCleanupTask() {
