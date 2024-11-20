@@ -9,6 +9,7 @@ class ChannelManager(private val jda: JDA) {
     private val logger = Logger.getLogger(ChannelManager::class.java.name)
     private val tempChannels = ConcurrentHashMap<String, TemporaryChannel>()
 
+
     fun validateChannels() {
         tempChannels.values.forEach { tempChannel ->
             val channel = tempChannel.channel

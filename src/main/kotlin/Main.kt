@@ -31,15 +31,6 @@ class Main(private val token: String) : ListenerAdapter() {
         startCleanupTask()
     }
 
-    override fun onReady(event: ReadyEvent) {
-        channelManager.validateChannels()
-    }
-
-    override fun onStatusChange(event: StatusChangeEvent) {
-        if (event.newStatus == JDA.Status.CONNECTED) {
-            channelManager.validateChannels()
-        }
-    }
 
     private fun startCleanupTask() {
         scheduler.scheduleAtFixedRate({
