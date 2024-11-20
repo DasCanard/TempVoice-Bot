@@ -9,6 +9,22 @@ class ChannelManager(private val jda: JDA) {
     private val logger = Logger.getLogger(ChannelManager::class.java.name)
     private val tempChannels = ConcurrentHashMap<String, TemporaryChannel>()
 
+    fun validateChannels() {
+        tempChannels.values.forEach { tempChannel ->
+            val channel = tempChannel.channel
+            if (channel.members.isEmpty()) {
+                deleteChannel(channel)
+            }
+        }
+    }
+
+    private fun deleteChannel(channel: VoiceChannel) {
+        channel.delete().queue {
+            tempChannels.remove(channel.id)
+            logger.info("Deleted temporary channel: ${channel.name}")
+        }
+    }
+
     fun createTemporaryChannel(event: GuildVoiceUpdateEvent, config: BotConfig) {
         val guild = event.guild
         val hubChannel = event.channelJoined!!
@@ -28,7 +44,9 @@ class ChannelManager(private val jda: JDA) {
         tempChannels[newChannel.id] = TemporaryChannel(
             channelId = newChannel.id,
             hubId = hubChannel.id,
-            creatorId = member.id
+            creatorId = member.id,
+            channel = newChannel,
+            hubChannel = newChannel
         )
 
         guild.moveVoiceMember(member, newChannel).queue(

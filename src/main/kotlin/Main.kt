@@ -2,7 +2,9 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel
+import net.dv8tion.jda.api.events.StatusChangeEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent
+import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.requests.GatewayIntent
 import java.util.concurrent.Executors
@@ -15,6 +17,16 @@ class Main(private val token: String) : ListenerAdapter() {
     private lateinit var jda: JDA
     private lateinit var channelManager: ChannelManager
     private val config = ConfigLoader.loadConfig()
+
+    override fun onReady(event: ReadyEvent) {
+        channelManager.validateChannels()
+    }
+
+    override fun onStatusChange(event: StatusChangeEvent) {
+        if (event.newStatus == JDA.Status.CONNECTED) {
+            channelManager.validateChannels()
+        }
+    }
 
     fun start() {
         jda = JDABuilder.createDefault(token)
