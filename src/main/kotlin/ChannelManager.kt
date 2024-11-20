@@ -22,7 +22,7 @@ class ChannelManager(private val jda: JDA) {
             .setParent(hubChannel.parentCategory)
             .setBitrate(hubChannel.bitrate)
             .setUserlimit(hubChannel.userLimit)
-            .setPosition(hubChannel.position - 1)
+            .setPosition(hubChannel.positionInCategory - 1)
             .complete()
 
         tempChannels[newChannel.id] = TemporaryChannel(
